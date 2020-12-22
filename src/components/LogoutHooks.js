@@ -2,8 +2,7 @@ import React from "react";
 import { useGoogleLogout } from "react-google-login";
 import { Button } from "react-bootstrap";
 
-import config from "../config.json";
-const clientId = config.GOOGLE_CLIENT_ID;
+const clientId = process.env.REACT_APP_GOOGLE_CLIENT_ID;
 
 function LogoutHooks({ setShowLogout }) {
   const onLogoutSuccess = (res) => {

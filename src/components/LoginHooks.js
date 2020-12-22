@@ -2,9 +2,7 @@ import { Button } from "react-bootstrap";
 import React from "react";
 import { useGoogleLogin } from "react-google-login";
 
-import config from "../config.json";
-
-const clientId = config.GOOGLE_CLIENT_ID;
+const clientId = process.env.REACT_APP_GOOGLE_CLIENT_ID;
 
 function LoginHooks({ onSuccess }) {
   const onFailure = (res) => {
