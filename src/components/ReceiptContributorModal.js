@@ -1,5 +1,5 @@
 import { React, useState } from "react";
-import { Form, Button, Modal } from "react-bootstrap";
+import { Form, Button, Modal, Col } from "react-bootstrap";
 import BootstrapTable from "react-bootstrap-table-next";
 import { ACTIONS } from "../App";
 
@@ -61,28 +61,33 @@ export default function ReceiptContributorModal({ contributors, dispatch }) {
           </Button>
         </Modal.Footer>
       </Modal>
+      <Form>
+        <Form.Group>
+          <Form.Row>
+            <Col>
+              {/* Add contributor button */}
+              <Button
+                onClick={() => handleContributor(ACTIONS.ADD_CONTRIBUTOR)}
+                variant="secondary"
+                className="form-control"
+              >
+                Assign
+              </Button>
+            </Col>
 
-      {/* Add contributor button */}
-      <Form.Group controlId="contributorAdd">
-        <Button
-          type="submit"
-          onClick={() => handleContributor(ACTIONS.ADD_CONTRIBUTOR)}
-          variant="secondary"
-        >
-          Assign
-        </Button>
-      </Form.Group>
-
-      {/* Delete contributor button */}
-      <Form.Group controlId="contributorDelete">
-        <Button
-          type="submit"
-          onClick={() => handleContributor(ACTIONS.DELETE_CONTRIBUTOR)}
-          variant="danger"
-        >
-          Remove
-        </Button>
-      </Form.Group>
+            <Col>
+              {/* Delete contributor button */}
+              <Button
+                onClick={() => handleContributor(ACTIONS.DELETE_CONTRIBUTOR)}
+                variant="danger"
+                className="form-control"
+              >
+                Remove
+              </Button>
+            </Col>
+          </Form.Row>
+        </Form.Group>
+      </Form>
     </>
   );
 }

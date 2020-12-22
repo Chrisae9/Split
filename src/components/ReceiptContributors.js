@@ -1,5 +1,5 @@
 import { React, useState, useRef } from "react";
-import { Form, Button } from "react-bootstrap";
+import { Form, Button, Card } from "react-bootstrap";
 import BootstrapTable from "react-bootstrap-table-next";
 import { v4 as UUID } from "uuid";
 import { ACTIONS } from "../App";
@@ -17,7 +17,7 @@ export default function ReceiptContributors({
     {
       dataField: "name",
       text: "Contributors List",
-      sort: true,
+      // sort: true,
     },
   ];
 
@@ -56,23 +56,29 @@ export default function ReceiptContributors({
   return (
     <>
       {/* Receipt Contributor */}
-      <Form onSubmit={handleSubmit}>
-        <Form.Group controlId="receiptContributor">
-          <Form.Control
-            type="text"
-            placeholder="Contributor"
-            value={contributor}
-            ref={inputContributorRef}
-            onChange={(e) => setContributor(e.target.value)}
-          />
-        </Form.Group>
-        <Form.Group controlId="receiptAddContributor">
-          {/* Contributor Add */}
-          <Button type="submit" variant="secondary">
-            Add
-          </Button>
-        </Form.Group>
-      </Form>
+      <Form.Group>
+        <Card>
+          <Card.Body>
+            <Form onSubmit={handleSubmit}>
+              <Form.Group controlId="receiptContributor">
+                <Form.Control
+                  type="text"
+                  placeholder="Contributor"
+                  value={contributor}
+                  ref={inputContributorRef}
+                  onChange={(e) => setContributor(e.target.value)}
+                />
+              </Form.Group>
+              <Form.Group controlId="receiptAddContributor">
+                {/* Contributor Add */}
+                <Button type="submit" variant="dark" className="form-control">
+                  Add
+                </Button>
+              </Form.Group>
+            </Form>
+          </Card.Body>
+        </Card>
+      </Form.Group>
 
       {/* Contributors  */}
       <BootstrapTable

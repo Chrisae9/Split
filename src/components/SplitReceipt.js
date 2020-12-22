@@ -1,5 +1,13 @@
 import { React, useState } from "react";
-import { Button, Modal, Card, ListGroup, ListGroupItem } from "react-bootstrap";
+import {
+  Button,
+  Modal,
+  Card,
+  ListGroup,
+  ListGroupItem,
+  Form,
+  Col,
+} from "react-bootstrap";
 
 export default function SplitReceipt({ contributors, items }) {
   const [show, setShow] = useState(false);
@@ -14,28 +22,30 @@ export default function SplitReceipt({ contributors, items }) {
     return contributors.map((contributor) => {
       var total = 0;
       return (
-        <Card>
-          <Card.Body>
-            <Card.Title>{contributor.name}</Card.Title>
-            <Card.Text>
-              <ListGroup>
-                {items.map((item) => {
-                  if (item.contributors.includes(contributor)) {
-                    var splitCost =
-                      parseFloat(item.cost) / item.contributors.length;
-                    total = total + splitCost;
-                    return (
-                      <ListGroupItem key={item.id}>
-                        {item.name}: ${splitCost.toFixed(2)}
-                      </ListGroupItem>
-                    );
-                  }
-                })}
-              </ListGroup>
-            </Card.Text>
-          </Card.Body>
-          <Card.Footer>${total.toFixed(2)}</Card.Footer>
-        </Card>
+        <Form.Group>
+          <Card>
+            <Card.Body>
+              <Card.Title>{contributor.name}</Card.Title>
+              <Card.Text>
+                <ListGroup>
+                  {items.map((item) => {
+                    if (item.contributors.includes(contributor)) {
+                      var splitCost =
+                        parseFloat(item.cost) / item.contributors.length;
+                      total = total + splitCost;
+                      return (
+                        <ListGroupItem key={item.id}>
+                          {item.name}: ${splitCost.toFixed(2)}
+                        </ListGroupItem>
+                      );
+                    }
+                  })}
+                </ListGroup>
+              </Card.Text>
+            </Card.Body>
+            <Card.Footer>${total.toFixed(2)}</Card.Footer>
+          </Card>
+        </Form.Group>
       );
     });
   }
@@ -70,9 +80,17 @@ export default function SplitReceipt({ contributors, items }) {
 
   return (
     <>
-      <Button variant="dark" onClick={() => handleSplit()}>
-        Split
-      </Button>
+      <Form.Group>
+        {/* Split Receipt Button */}
+        <Button
+          variant="secondary"
+          onClick={() => handleSplit()}
+          className="form-control"
+        >
+          Split
+        </Button>
+      </Form.Group>
+
       {/* Modal Pop-up window */}
       <Modal show={show} onHide={handleClose} size="lg">
         <Modal.Header closeButton>

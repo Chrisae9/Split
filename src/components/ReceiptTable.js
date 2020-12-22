@@ -1,6 +1,6 @@
 import { React, useState, useRef, useEffect } from "react";
 import BootstrapTable from "react-bootstrap-table-next";
-import { Form, Button } from "react-bootstrap";
+import { Card, Form, Button } from "react-bootstrap";
 import CurrencyInput from "react-currency-input-field";
 import { ACTIONS } from "../App.js";
 
@@ -14,12 +14,12 @@ export default function ReceiptTable({ items, dispatch }) {
     {
       dataField: "name",
       text: "Name",
-      sort: true,
+      // sort: true,
     },
     {
       dataField: "cost",
       text: "Cost",
-      sort: true,
+      // sort: true,
       formatter: (cell, row) => {
         return <>${cell}</>;
       },
@@ -57,9 +57,9 @@ export default function ReceiptTable({ items, dispatch }) {
 
   // Click to delete item
   const rowEvents = {
-    onClick: (e, row, rowIndex) => {
-      dispatch({ type: ACTIONS.DELETE_ITEM, payload: { id: row.id } });
-    },
+    // onClick: (e, row, rowIndex) => {
+    //   dispatch({ type: ACTIONS.DELETE_ITEM, payload: { id: row.id } });
+    // },
   };
 
   // Submit form action
@@ -71,7 +71,7 @@ export default function ReceiptTable({ items, dispatch }) {
       type: ACTIONS.ADD_ITEM,
       payload: {
         name: name,
-        cost: parseFloat(cost).toFixed(2),
+        cost: cost,
       },
     });
     // Reset fields and focus item name
@@ -116,39 +116,44 @@ export default function ReceiptTable({ items, dispatch }) {
 
       {/* Total cost of the items */}
       <h4>Total = ${parseFloat(total).toFixed(2)}</h4>
+      <Form.Group>
+        <Card>
+          <Card.Body>
+            {/* Form to submit the items */}
+            <Form onSubmit={handleSubmit}>
+              {/* Name of the Item */}
+              <Form.Group controlId="itemName">
+                <Form.Control
+                  type="text"
+                  placeholder="Item"
+                  value={name}
+                  ref={inputNameRef}
+                  onChange={(e) => setName(e.target.value)}
+                />
+              </Form.Group>
+              {/* Cost of the item */}
+              <Form.Group controlId="itemCost">
+                <CurrencyInput
+                  placeholder="$0.00"
+                  allowDecimals={true}
+                  decimalsLimit={2}
+                  prefix="$"
+                  className="form-control"
+                  value={cost}
+                  onChange={(value) => setCost(value)}
+                />
+              </Form.Group>
 
-      {/* Form to submit the items */}
-      <Form onSubmit={handleSubmit}>
-        {/* Name of the Item */}
-        <Form.Group controlId="itemName">
-          <Form.Control
-            type="text"
-            placeholder="Item"
-            value={name}
-            ref={inputNameRef}
-            onChange={(e) => setName(e.target.value)}
-          />
-        </Form.Group>
-        {/* Cost of the item */}
-        <Form.Group controlId="itemCost">
-          <CurrencyInput
-            placeholder="$0.00"
-            allowDecimals={true}
-            decimalsLimit={2}
-            prefix="$"
-            className="form-control"
-            // allowEmpty="true"
-            value={cost}
-            onChange={(value) => setCost(value)}
-          />
-        </Form.Group>
-        {/* Button to add the item to the table */}
-        <Form.Group controlId="formSubmit">
-          <Button type="submit" variant="secondary">
-            Add Item
-          </Button>
-        </Form.Group>
-      </Form>
+              {/* Button to add the item to the table */}
+              <Form.Group controlId="formSubmit">
+                <Button type="submit" variant="dark" className="form-control">
+                  Add Item
+                </Button>
+              </Form.Group>
+            </Form>
+          </Card.Body>
+        </Card>
+      </Form.Group>
     </>
   );
 }

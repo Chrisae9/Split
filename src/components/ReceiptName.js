@@ -1,5 +1,5 @@
 import React from "react";
-import { Form } from "react-bootstrap";
+import { Form, Col, Button } from "react-bootstrap";
 
 export default function ReceiptName(props) {
   return (
@@ -11,16 +11,41 @@ export default function ReceiptName(props) {
             value={props.value}
             type="text"
             onChange={(event) => props.onChange(event.target.value)}
-            placeholder="Receipt name"
+            placeholder="Receipt Name"
           />
         </Form.Group>
       </Form>
 
-      {/* TODO: Move to different file! */}
-
       {/* Receipt Save & Delete */}
-      {/* <Button variant="secondary">Save</Button>
-      <Button variant="danger">Delete</Button> */}
+      <Form>
+        <Form.Group>
+          <Form.Row>
+            <Col>
+              {/* Add contributor button */}
+              <Button
+                type="submit"
+                // onClick={() => handleContributor(ACTIONS.ADD_CONTRIBUTOR)}
+                variant="secondary"
+                className="form-control"
+              >
+                Save
+              </Button>
+            </Col>
+
+            <Col>
+              {/* Delete contributor button */}
+              <Button
+                type="submit"
+                // onClick={() => handleContributor(ACTIONS.DELETE_CONTRIBUTOR)}
+                variant="danger"
+                className="form-control"
+              >
+                Delete
+              </Button>
+            </Col>
+          </Form.Row>
+        </Form.Group>
+      </Form>
     </>
   );
 }

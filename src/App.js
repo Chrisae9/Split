@@ -1,13 +1,17 @@
 import "./App.css";
-import { React, useState, useReducer } from "react";
+import { React, useState, useReducer, useEffect } from "react";
 import TopPage from "./components/TopPage";
 import ReceiptName from "./components/ReceiptName";
 import ReceiptContributors from "./components/ReceiptContributors";
 import ReceiptTable from "./components/ReceiptTable";
 import SplitReceipt from "./components/SplitReceipt";
-import { Card } from "react-bootstrap";
+import { Card, Col, Row, Form } from "react-bootstrap";
 import { v4 as UUID } from "uuid";
 import ReceiptContributorModal from "./components/ReceiptContributorModal";
+import LoginHooks from "./components/LoginHooks";
+import LogoutHooks from "./components/LogoutHooks";
+import ReceiptSelect from "./components/ReceiptSelect";
+import { refreshTokenSetup } from "./utils/refreshToken";
 
 export const ACTIONS = {
   ADD_ITEM: "add-item",
@@ -94,20 +98,35 @@ function newItem(name, cost) {
 
 function App() {
   // Receipt ID for use with database
-  // const [id, setID] = useState(UUID());
-  // const [name, setName] = useState("");
+  const [id, setId] = useState("");
+  const [name, setName] = useState("");
+  const [showLogout, setShowLogout] = useState(false);
 
   const [contributors, setContributors] = useState([]);
 
   const [items, dispatch] = useReducer(reducer, []);
-  return (
-    <>
-      <TopPage />
 
+  const onSuccess = (res) => {
+    // console.log("Login Success: currentUser:", res.profileObj);
+    // alert(`Your google id is ${res.googleId}`);
+    setShowLogout(() => true);
+    refreshTokenSetup(res);
+  };
+
+  return (
+    <div className="App-header">
+      <TopPage />
       <Card className="col-11 mx-auto">
         <Card.Body>
-          {/* Uncomment when database is implemented */}
-          {/* <ReceiptName value={name} onChange={(name) => setName(name)} /> */}
+          <Form.Group>
+            {!showLogout && <LoginHooks onSuccess={onSuccess} />}
+            {showLogout && (
+              <LogoutHooks setShowLogout={(logout) => setShowLogout(logout)} />
+            )}
+          </Form.Group>
+
+          <ReceiptSelect />
+          <ReceiptName value={name} onChange={(name) => setName(name)} />
           <ReceiptContributors
             contributors={contributors}
             setContributors={(contributors) => setContributors(contributors)}
@@ -122,7 +141,7 @@ function App() {
           <SplitReceipt contributors={contributors} items={items} />
         </Card.Body>
       </Card>
-    </>
+    </div>
   );
 }
 
