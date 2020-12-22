@@ -57,9 +57,9 @@ export default function ReceiptTable({ items, dispatch }) {
 
   // Click to delete item
   const rowEvents = {
-    // onClick: (e, row, rowIndex) => {
-    //   dispatch({ type: ACTIONS.DELETE_ITEM, payload: { id: row.id } });
-    // },
+    onClick: (e, row, rowIndex) => {
+      dispatch({ type: ACTIONS.DELETE_ITEM, payload: { id: row.id } });
+    },
   };
 
   // Submit form action
