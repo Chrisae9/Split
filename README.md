@@ -32,6 +32,8 @@ Install dependencies.
 
 ## Run
 
+For local hosting/testing use.
+
 `npm start`
 
 To deploy to GitHub pages make sure the correct homepage is set at the top of `package.json`.
