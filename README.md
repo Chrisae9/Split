@@ -1,6 +1,6 @@
 # Split
 
-A react app to split a grocery bill between contributors.
+A React application to split a grocery bill between contributors.
 
 ## Setup
 
@@ -34,7 +34,7 @@ Install dependencies.
 
 `npm start`
 
-To deploy to GitHub pages make sure the correct homepage is set at the top of `package.json`
+To deploy to GitHub pages make sure the correct homepage is set at the top of `package.json`.
 
 `npm run deploy`
 
