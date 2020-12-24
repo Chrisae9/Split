@@ -8,7 +8,7 @@ Head over to the [Google Developer Console](https://console.developers.google.co
 
 Create a new OAuth client ID.
 
-Edit the new credentials settings and make sure that the correct URI origins are set under `Authorized JavaScript origins` and `Authorized redirect URIs`.
+Go to the settings and make sure that the correct URI origins are set under `Authorized JavaScript origins` and `Authorized redirect URIs`.
 
 For local/testing use `http://localhost:{port}`.
 
