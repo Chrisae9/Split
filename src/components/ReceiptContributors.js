@@ -11,7 +11,7 @@ export default function ReceiptContributors({
 }) {
   const columns = [
     {
-      dataField: "id",
+      dataField: "_id",
       hidden: true,
     },
     {
@@ -31,7 +31,7 @@ export default function ReceiptContributors({
     setContributors(
       (prevContributors) =>
         (prevContributors = [
-          { id: UUID(), name: contributor },
+          { _id: UUID(), name: contributor },
           ...prevContributors,
         ])
     );
@@ -44,7 +44,7 @@ export default function ReceiptContributors({
     // make sure to remove contributor from items
     onClick: (e, row, rowIndex) => {
       setContributors((prevContributor) =>
-        prevContributor.filter((p) => p.id !== row.id)
+        prevContributor.filter((p) => p._id !== row._id)
       );
       dispatch({
         type: ACTIONS.REMOVE_CONTRIBUTOR,
@@ -82,7 +82,7 @@ export default function ReceiptContributors({
 
       {/* Contributors  */}
       <BootstrapTable
-        keyField="id"
+        keyField="_id"
         data={contributors}
         columns={columns}
         rowEvents={rowEvents}

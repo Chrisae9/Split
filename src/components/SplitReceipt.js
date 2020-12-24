@@ -33,7 +33,7 @@ export default function SplitReceipt({ contributors, items }) {
                         parseFloat(item.cost) / item.contributors.length;
                       total = total + splitCost;
                       return (
-                        <ListGroupItem key={item.id}>
+                        <ListGroupItem key={item._id}>
                           {item.name}: ${splitCost.toFixed(2)}
                         </ListGroupItem>
                       );
@@ -61,7 +61,7 @@ export default function SplitReceipt({ contributors, items }) {
                 if (item.contributors.length === 0) {
                   remaining = remaining + parseFloat(item.cost);
                   return (
-                    <ListGroupItem key={item.id}>
+                    <ListGroupItem key={item._id}>
                       {item.name}: ${item.cost}
                     </ListGroupItem>
                   );

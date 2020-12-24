@@ -8,7 +8,7 @@ export default function ReceiptTable({ items, dispatch }) {
   // Datafeilds for the receipt table
   const columns = [
     {
-      dataField: "id",
+      dataField: "_id",
       hidden: true,
     },
     {
@@ -58,7 +58,7 @@ export default function ReceiptTable({ items, dispatch }) {
   // Click to delete item
   const rowEvents = {
     onClick: (e, row, rowIndex) => {
-      dispatch({ type: ACTIONS.DELETE_ITEM, payload: { id: row.id } });
+      dispatch({ type: ACTIONS.DELETE_ITEM, payload: { id: row._id } });
     },
   };
 
@@ -93,7 +93,7 @@ export default function ReceiptTable({ items, dispatch }) {
   const selectRow = {
     mode: "checkbox",
     onSelect: (row, isSelect, rowIndex, e) => {
-      dispatch({ type: ACTIONS.TOGGLE_ITEM, payload: { id: row.id } });
+      dispatch({ type: ACTIONS.TOGGLE_ITEM, payload: { id: row._id } });
     },
     onSelectAll: (isSelect, rows, e) => {
       dispatch({ type: ACTIONS.TOGGLE_ITEMS, payload: { selected: isSelect } });
@@ -104,7 +104,7 @@ export default function ReceiptTable({ items, dispatch }) {
     <>
       {/* Table to display items */}
       <BootstrapTable
-        keyField="id"
+        keyField="_id"
         data={items}
         columns={columns}
         rowEvents={rowEvents}

@@ -30,7 +30,7 @@ function reducer(items, action) {
       return [...items, newItem(action.payload.name, action.payload.cost)];
     case ACTIONS.TOGGLE_ITEM:
       return items.map((item) => {
-        if (item.id === action.payload.id) {
+        if (item._id === action.payload.id) {
           return { ...item, selected: !item.selected };
         }
         return item;
@@ -40,7 +40,7 @@ function reducer(items, action) {
         return { ...item, selected: action.payload.selected };
       });
     case ACTIONS.DELETE_ITEM:
-      return items.filter((item) => item.id !== action.payload.id);
+      return items.filter((item) => item._id !== action.payload.id);
     case ACTIONS.ADD_CONTRIBUTOR:
       return items.map((item) => {
         if (
@@ -54,7 +54,6 @@ function reducer(items, action) {
         }
         return item;
       });
-    // TODO: Reference contributors ONLY by ID
     case ACTIONS.REMOVE_CONTRIBUTOR:
       return items.map((item) => {
         if (item.contributors.includes(action.payload.contributor)) {
@@ -91,7 +90,7 @@ function reducer(items, action) {
 
 function newItem(name, cost) {
   return {
-    id: UUID(),
+    _id: UUID(),
     name: name,
     cost: cost,
     selected: false,

@@ -6,7 +6,7 @@ import { ACTIONS } from "../App";
 export default function ReceiptContributorModal({ contributors, dispatch }) {
   const columns = [
     {
-      dataField: "id",
+      dataField: "_id",
       hidden: true,
     },
     {
@@ -47,7 +47,7 @@ export default function ReceiptContributorModal({ contributors, dispatch }) {
         </Modal.Header>
         <Modal.Body>
           <BootstrapTable
-            keyField="id"
+            keyField="_id"
             data={contributors}
             columns={columns}
             rowEvents={rowEvents}

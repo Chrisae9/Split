@@ -13,6 +13,7 @@ export default function ReceiptSelect({
 
   useEffect(() => {
     if (signedIn) {
+      console.log(receipts);
       getOptions(receipts);
     } else {
       setOptions();
