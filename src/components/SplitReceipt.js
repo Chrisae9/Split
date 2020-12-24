@@ -6,7 +6,6 @@ import {
   ListGroup,
   ListGroupItem,
   Form,
-  Col,
 } from "react-bootstrap";
 
 export default function SplitReceipt({ contributors, items }) {

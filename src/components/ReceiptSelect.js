@@ -12,7 +12,6 @@ export default function ReceiptSelect({
   const [options, setOptions] = useState([]);
 
   useEffect(() => {
-    console.log(receipts);
     if (signedIn) {
       getOptions(receipts);
     } else {
@@ -23,7 +22,6 @@ export default function ReceiptSelect({
   function getOptions(receipts) {
     setOptions(
       receipts.map((receipt) => {
-        console.log(receipt.name);
         return { value: receipt._id, label: receipt.name };
       })
     );

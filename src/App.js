@@ -1,11 +1,11 @@
 import "./App.css";
-import { React, useState, useReducer, useEffect } from "react";
+import { React, useState, useReducer } from "react";
 import TopPage from "./components/TopPage";
 import ReceiptName from "./components/ReceiptName";
 import ReceiptContributors from "./components/ReceiptContributors";
 import ReceiptTable from "./components/ReceiptTable";
 import SplitReceipt from "./components/SplitReceipt";
-import { Card, Col, Row, Form } from "react-bootstrap";
+import { Card, Form } from "react-bootstrap";
 import { v4 as UUID } from "uuid";
 import ReceiptContributorModal from "./components/ReceiptContributorModal";
 import LoginHooks from "./components/LoginHooks";
@@ -110,8 +110,11 @@ function App() {
 
   const [signedIn, setSignedIn] = useState(false);
 
-  function getAllReceipts(owner) {
-    fetch(`${process.env.REACT_APP_SERVER}/receipts/${owner}`)
+  async function getAllReceipts(owner) {
+    await fetch(`${process.env.REACT_APP_SERVER}/receipts/${owner}`, {
+      mode: "cors",
+      headers: { "Access-Control-Allow-Origin": "*" },
+    })
       .then((res) => res.json())
       .then((json) => setReceipts(json));
   }
@@ -126,8 +129,7 @@ function App() {
   }
 
   // Save button clicked
-  function onSave() {
-    console.log("saving");
+  async function onSave() {
     // Not logged in
     if (googleId === "") {
       alert("Please Login");
@@ -144,13 +146,14 @@ function App() {
 
     // Receipt already exists, update it
     if (receiptId !== "") {
-      console.log("putting");
-      fetch(
+      await fetch(
         `${process.env.REACT_APP_SERVER}/receipts/${googleId}/${receiptId}`,
         {
+          mode: "cors",
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": "*",
           },
           body: JSON.stringify(data),
         }
@@ -168,10 +171,12 @@ function App() {
       setReceiptId(data._id);
 
       // Upload receipt
-      fetch(`${process.env.REACT_APP_SERVER}/receipts/`, {
+      await fetch(`${process.env.REACT_APP_SERVER}/receipts/`, {
+        mode: "cors",
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          "Access-Control-Allow-Origin": "*",
         },
         body: JSON.stringify(data),
       })
@@ -186,40 +191,42 @@ function App() {
     window.location.reload(false);
   }
 
-  function onDelete() {
+  async function onDelete() {
     if (googleId === "") {
       alert("Please Login");
       return;
     }
     if (receiptId === "") {
       console.log("No receipt exists, reloading page");
+    } else {
+      await fetch(
+        `${process.env.REACT_APP_SERVER}/receipts/${googleId}/${receiptId}`,
+        {
+          mode: "cors",
+          method: "DELETE",
+          headers: { "Access-Control-Allow-Origin": "*" },
+        }
+      )
+        .then((res) => res.json()) // or res.text()
+        .then((res) => console.log(res));
     }
-
-    console.log("deleting");
-    fetch(`${process.env.REACT_APP_SERVER}/receipts/${googleId}/${receiptId}`, {
-      method: "DELETE",
-    })
-      .then((res) => res.json()) // or res.text()
-      .then((res) => console.log(res));
 
     window.location.reload(false);
   }
 
-  function onSelect(selection) {
-    console.log(selection);
+  async function onSelect(selection) {
     if (googleId === "") {
       alert("Please Login");
       return;
     }
-    console.log("setting receiptid");
     setReceiptId(selection.value);
 
-    fetch(
-      `${process.env.REACT_APP_SERVER}/receipts/${googleId}/${selection.value}`
+    await fetch(
+      `${process.env.REACT_APP_SERVER}/receipts/${googleId}/${selection.value}`,
+      { mode: "cors", headers: { "Access-Control-Allow-Origin": "*" } }
     )
       .then((res) => res.json())
       .then((json) => {
-        console.log("setting");
         setName(json.name);
         dispatch({ type: ACTIONS.SET_ITEMS, payload: { items: json.items } });
         setContributors(json.contributors);

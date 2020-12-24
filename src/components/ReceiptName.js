@@ -1,5 +1,5 @@
 import React from "react";
-import { Form, Col, Button } from "react-bootstrap";
+import { Form } from "react-bootstrap";
 
 export default function ReceiptName(props) {
   return (
