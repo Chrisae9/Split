@@ -21,6 +21,7 @@ export const ACTIONS = {
   ADD_CONTRIBUTOR: "add-contributor",
   DELETE_CONTRIBUTOR: "delete-contributor",
   REMOVE_CONTRIBUTOR: "remove-contributor",
+  SET_ITEMS: "set-items",
 };
 
 function reducer(items, action) {
@@ -81,6 +82,8 @@ function reducer(items, action) {
         }
         return item;
       });
+    case ACTIONS.SET_ITEMS:
+      return action.payload.items;
     default:
       return items;
   }
@@ -97,21 +100,131 @@ function newItem(name, cost) {
 }
 
 function App() {
-  // Receipt ID for use with database
-  const [id, setId] = useState("");
+  const [googleId, setGoogleId] = useState("");
+  const [receiptId, setReceiptId] = useState("");
   const [name, setName] = useState("");
-  const [showLogout, setShowLogout] = useState(false);
-
+  const [items, dispatch] = useReducer(reducer, []);
   const [contributors, setContributors] = useState([]);
 
-  const [items, dispatch] = useReducer(reducer, []);
+  const [receipts, setReceipts] = useState([]);
 
-  const onSuccess = (res) => {
-    // console.log("Login Success: currentUser:", res.profileObj);
-    // alert(`Your google id is ${res.googleId}`);
-    setShowLogout(() => true);
+  const [signedIn, setSignedIn] = useState(false);
+
+  function getAllReceipts(owner) {
+    fetch(`${process.env.REACT_APP_SERVER}/receipts/${owner}`)
+      .then((res) => res.json())
+      .then((json) => setReceipts(json));
+  }
+
+  // On successful login
+  function onSuccess(res) {
+    setGoogleId(() => res.googleId);
+    getAllReceipts(res.googleId);
+    setSignedIn(() => true);
+    console.log(`Successfully logged in, your google id is ${res.googleId}`);
     refreshTokenSetup(res);
-  };
+  }
+
+  // Save button clicked
+  function onSave() {
+    console.log("saving");
+    // Not logged in
+    if (googleId === "") {
+      alert("Please Login");
+      return;
+    }
+
+    var data = {
+      owner: googleId,
+      _id: receiptId,
+      name: name,
+      items: items,
+      contributors: contributors,
+    };
+
+    // Receipt already exists, update it
+    if (receiptId !== "") {
+      console.log("putting");
+      fetch(
+        `${process.env.REACT_APP_SERVER}/receipts/${googleId}/${receiptId}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        }
+      )
+        .then((response) => response.json())
+        .then((data) => {
+          console.log("Success:", data);
+        })
+        .catch((error) => {
+          console.error("Error:", error);
+        });
+    } else {
+      // Receipt doesn't exist, create a new one
+      data._id = UUID();
+      setReceiptId(data._id);
+
+      // Upload receipt
+      fetch(`${process.env.REACT_APP_SERVER}/receipts/`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          console.log("Success:", data);
+        })
+        .catch((error) => {
+          console.error("Error:", error);
+        });
+    }
+    window.location.reload(false);
+  }
+
+  function onDelete() {
+    if (googleId === "") {
+      alert("Please Login");
+      return;
+    }
+    if (receiptId === "") {
+      console.log("No receipt exists, reloading page");
+    }
+
+    console.log("deleting");
+    fetch(`${process.env.REACT_APP_SERVER}/receipts/${googleId}/${receiptId}`, {
+      method: "DELETE",
+    })
+      .then((res) => res.json()) // or res.text()
+      .then((res) => console.log(res));
+
+    window.location.reload(false);
+  }
+
+  function onSelect(selection) {
+    console.log(selection);
+    if (googleId === "") {
+      alert("Please Login");
+      return;
+    }
+    console.log("setting receiptid");
+    setReceiptId(selection.value);
+
+    fetch(
+      `${process.env.REACT_APP_SERVER}/receipts/${googleId}/${selection.value}`
+    )
+      .then((res) => res.json())
+      .then((json) => {
+        console.log("setting");
+        setName(json.name);
+        dispatch({ type: ACTIONS.SET_ITEMS, payload: { items: json.items } });
+        setContributors(json.contributors);
+      });
+  }
 
   return (
     <div className="App-header">
@@ -119,13 +232,19 @@ function App() {
       <Card className="col-11 mx-auto">
         <Card.Body>
           <Form.Group>
-            {!showLogout && <LoginHooks onSuccess={onSuccess} />}
-            {showLogout && (
-              <LogoutHooks setShowLogout={(logout) => setShowLogout(logout)} />
+            {!signedIn && <LoginHooks onSuccess={onSuccess} />}
+            {signedIn && (
+              <LogoutHooks setSignedIn={(status) => setSignedIn(status)} />
             )}
           </Form.Group>
 
-          <ReceiptSelect />
+          <ReceiptSelect
+            receipts={receipts}
+            signedIn={signedIn}
+            onSave={onSave}
+            onDelete={onDelete}
+            onSelect={onSelect}
+          />
           <ReceiptName value={name} onChange={(name) => setName(name)} />
           <ReceiptContributors
             contributors={contributors}
