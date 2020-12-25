@@ -17,6 +17,7 @@ export default function SplitReceipt({ contributors, items }) {
     setShow(true);
   }
 
+  //TODO: Fix NaN on blank cost
   function getBill() {
     return contributors.map((contributor) => {
       var total = 0;
@@ -28,7 +29,13 @@ export default function SplitReceipt({ contributors, items }) {
               <Card.Text>
                 <ListGroup>
                   {items.map((item) => {
-                    if (item.contributors.includes(contributor)) {
+                    var hasElement = false;
+                    item.contributors.map((c) => {
+                      if (c.name === contributor.name) {
+                        hasElement = true;
+                      }
+                    });
+                    if (hasElement) {
                       var splitCost =
                         parseFloat(item.cost) / item.contributors.length;
                       total = total + splitCost;

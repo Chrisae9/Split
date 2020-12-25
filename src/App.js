@@ -43,10 +43,14 @@ function reducer(items, action) {
       return items.filter((item) => item._id !== action.payload.id);
     case ACTIONS.ADD_CONTRIBUTOR:
       return items.map((item) => {
-        if (
-          item.selected &&
-          !item.contributors.includes(action.payload.contributor)
-        ) {
+        var hasElement = false;
+        item.contributors.map((c) => {
+          if (c.name === action.payload.contributor.name) {
+            hasElement = true;
+          }
+        });
+
+        if (item.selected && !hasElement) {
           return {
             ...item,
             contributors: item.contributors.concat(action.payload.contributor),
@@ -56,11 +60,18 @@ function reducer(items, action) {
       });
     case ACTIONS.REMOVE_CONTRIBUTOR:
       return items.map((item) => {
-        if (item.contributors.includes(action.payload.contributor)) {
+        var hasElement = false;
+        item.contributors.map((c) => {
+          if (c.name === action.payload.contributor.name) {
+            hasElement = true;
+          }
+        });
+        if (hasElement) {
           return {
             ...item,
             contributors: item.contributors.filter(
-              (contributor) => contributor !== action.payload.contributor
+              (contributor) =>
+                contributor.name !== action.payload.contributor.name
             ),
           };
         }
@@ -68,14 +79,18 @@ function reducer(items, action) {
       });
     case ACTIONS.DELETE_CONTRIBUTOR:
       return items.map((item) => {
-        if (
-          item.selected &&
-          item.contributors.includes(action.payload.contributor)
-        ) {
+        var hasElement = false;
+        item.contributors.map((c) => {
+          if (c.name === action.payload.contributor.name) {
+            hasElement = true;
+          }
+        });
+        if (item.selected && hasElement) {
           return {
             ...item,
             contributors: item.contributors.filter(
-              (contributor) => contributor !== action.payload.contributor
+              (contributor) =>
+                contributor.name !== action.payload.contributor.name
             ),
           };
         }
@@ -110,12 +125,19 @@ function App() {
   const [signedIn, setSignedIn] = useState(false);
 
   async function getAllReceipts(owner) {
-    await fetch(`${process.env.REACT_APP_SERVER}/receipts/${owner}`, {
-      mode: "cors",
-      headers: { "Access-Control-Allow-Origin": "*" },
-    })
-      .then((res) => res.json())
-      .then((json) => setReceipts(json));
+    const response = async () => {
+      const res = await fetch(
+        `${process.env.REACT_APP_SERVER}/receipts/${owner}`,
+        {
+          mode: "cors",
+          headers: { "Access-Control-Allow-Origin": "*" },
+        }
+      );
+
+      const json = await res.json();
+      setReceipts(json);
+    };
+    await response();
   }
 
   // On successful login
@@ -135,6 +157,8 @@ function App() {
       return;
     }
 
+    let response = null;
+
     var data = {
       owner: googleId,
       _id: receiptId,
@@ -145,49 +169,45 @@ function App() {
 
     // Receipt already exists, update it
     if (receiptId !== "") {
-      await fetch(
-        `${process.env.REACT_APP_SERVER}/receipts/${googleId}/${receiptId}`,
-        {
-          mode: "cors",
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            "Access-Control-Allow-Origin": "*",
-          },
-          body: JSON.stringify(data),
-        }
-      )
-        .then((response) => response.json())
-        .then((data) => {
-          console.log("Success:", data);
-        })
-        .catch((error) => {
-          console.error("Error:", error);
-        });
+      response = async () => {
+        const res = await fetch(
+          `${process.env.REACT_APP_SERVER}/receipts/${googleId}/${receiptId}`,
+          {
+            mode: "cors",
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+              "Access-Control-Allow-Origin": "*",
+            },
+            body: JSON.stringify(data),
+          }
+        );
+        const json = await res.json();
+        console.log(json);
+      };
+      await response();
     } else {
       // Receipt doesn't exist, create a new one
       data._id = UUID();
       setReceiptId(data._id);
 
       // Upload receipt
-      await fetch(`${process.env.REACT_APP_SERVER}/receipts/`, {
-        mode: "cors",
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Access-Control-Allow-Origin": "*",
-        },
-        body: JSON.stringify(data),
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          console.log("Success:", data);
-        })
-        .catch((error) => {
-          console.error("Error:", error);
+      response = async () => {
+        const res = await fetch(`${process.env.REACT_APP_SERVER}/receipts/`, {
+          mode: "cors",
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": "*",
+          },
+          body: JSON.stringify(data),
         });
+        const json = await res.json();
+        console.log(json);
+      };
+      await response();
     }
-    window.location.reload(false);
+    window.location.reload();
   }
 
   async function onDelete() {
@@ -198,19 +218,21 @@ function App() {
     if (receiptId === "") {
       console.log("No receipt exists, reloading page");
     } else {
-      await fetch(
-        `${process.env.REACT_APP_SERVER}/receipts/${googleId}/${receiptId}`,
-        {
-          mode: "cors",
-          method: "DELETE",
-          headers: { "Access-Control-Allow-Origin": "*" },
-        }
-      )
-        .then((res) => res.json()) // or res.text()
-        .then((res) => console.log(res));
+      const response = async () => {
+        const res = await fetch(
+          `${process.env.REACT_APP_SERVER}/receipts/${googleId}/${receiptId}`,
+          {
+            mode: "cors",
+            method: "DELETE",
+            headers: { "Access-Control-Allow-Origin": "*" },
+          }
+        );
+        const json = await res.json();
+        console.log(json);
+      };
+      await response();
     }
-
-    window.location.reload(false);
+    window.location.reload();
   }
 
   async function onSelect(selection) {
@@ -220,16 +242,18 @@ function App() {
     }
     setReceiptId(selection.value);
 
-    await fetch(
-      `${process.env.REACT_APP_SERVER}/receipts/${googleId}/${selection.value}`,
-      { mode: "cors", headers: { "Access-Control-Allow-Origin": "*" } }
-    )
-      .then((res) => res.json())
-      .then((json) => {
-        setName(json.name);
-        dispatch({ type: ACTIONS.SET_ITEMS, payload: { items: json.items } });
-        setContributors(json.contributors);
-      });
+    const response = async () => {
+      const res = await fetch(
+        `${process.env.REACT_APP_SERVER}/receipts/${googleId}/${selection.value}`,
+        { mode: "cors", headers: { "Access-Control-Allow-Origin": "*" } }
+      );
+      const json = await res.json();
+      console.log(json);
+      setName(json.name);
+      dispatch({ type: ACTIONS.SET_ITEMS, payload: { items: json.items } });
+      setContributors(json.contributors);
+    };
+    await response();
   }
 
   return (
@@ -251,7 +275,7 @@ function App() {
             onDelete={onDelete}
             onSelect={onSelect}
           />
-          <ReceiptName value={name} onChange={(name) => setName(name)} />
+          <ReceiptName name={name} setName={(name) => setName(name)} />
           <ReceiptContributors
             contributors={contributors}
             setContributors={(contributors) => setContributors(contributors)}

@@ -27,14 +27,24 @@ export default function ReceiptContributors({
   function handleSubmit(event) {
     event.preventDefault();
 
+    // check to see if contributor already exists
+    var hasElement = false;
+    contributors.map((c) => {
+      if (c.name === contributor) {
+        hasElement = true;
+      }
+    });
+
     // Add to the start of contributors
-    setContributors(
-      (prevContributors) =>
-        (prevContributors = [
-          { _id: UUID(), name: contributor },
-          ...prevContributors,
-        ])
-    );
+    if (!hasElement) {
+      setContributors(
+        (prevContributors) =>
+          (prevContributors = [{ name: contributor }, ...prevContributors])
+      );
+    } else {
+      alert("Contributor already exists");
+    }
+
     setContributor("");
     inputContributorRef.current.focus();
   }
@@ -44,7 +54,7 @@ export default function ReceiptContributors({
     // make sure to remove contributor from items
     onClick: (e, row, rowIndex) => {
       setContributors((prevContributor) =>
-        prevContributor.filter((p) => p._id !== row._id)
+        prevContributor.filter((p) => p.name !== row.name)
       );
       dispatch({
         type: ACTIONS.REMOVE_CONTRIBUTOR,

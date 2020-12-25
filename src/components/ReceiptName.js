@@ -1,20 +1,18 @@
 import React from "react";
 import { Form } from "react-bootstrap";
 
-export default function ReceiptName(props) {
+export default function ReceiptName({ name, setName }) {
   return (
     <>
       {/* Receipt Name */}
-      <Form>
-        <Form.Group controlId="receiptName">
-          <Form.Control
-            value={props.value}
-            type="text"
-            onChange={(event) => props.onChange(event.target.value)}
-            placeholder="Receipt Name"
-          />
-        </Form.Group>
-      </Form>
+      <Form.Group controlId="receiptName">
+        <Form.Control
+          value={name}
+          type="text"
+          onChange={(event) => setName(event.target.value)}
+          placeholder="Receipt Name"
+        />
+      </Form.Group>
     </>
   );
 }
